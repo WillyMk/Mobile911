@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "491202853440",
+    "project_id": "mobile-911-kotlin",
+    "storage_bucket": "mobile-911-kotlin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491202853440:android:20601b4eaf147125debda5",
+        "android_client_info": {
+          "package_name": "com.WillyFisky.mobile911"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "491202853440-7a9k1m33ec8anuc2jjsfenuol9nfh1kv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.WillyFisky.mobile911",
+            "certificate_hash": "4a26c6c329301f5b17d926a38eb24490103236bc"
+          }
+        },
+        {
+          "client_id": "491202853440-n44kgli574pbsoil7es761tbmi8s0o80.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDlHNx7ZSCXBTKORXOlwhO2y3CPHMjYCk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "491202853440-n44kgli574pbsoil7es761tbmi8s0o80.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
