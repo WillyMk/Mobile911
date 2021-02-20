@@ -2,16 +2,14 @@ package com.WillyFisky.mobile911
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -22,14 +20,17 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import java.util.jar.Manifest
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private val REQUEST_LOCATION_PERMISSION = 1
+    private lateinit var database: FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +39,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val navView = findViewById<NavigationView>(R.id.navView)
         val drawer = findViewById<ImageView>(R.id.drawer)
-        val mapSpinner = findViewById<ProgressBar>(R.id.mapSpinner);
+        val mapSpinner = findViewById<ProgressBar>(R.id.mapSpinner)
+        val sendButton = findViewById<FloatingActionButton>(R.id.sendButton)
+        val requestText = findViewById<EditText>(R.id.requestText)
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.googleMap) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -46,8 +50,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapSpinner.isVisible = true
         mapSpinner.onFinishTemporaryDetach()
 
+        //initializing database
+        database = FirebaseDatabase.getInstance()
+        databaseReference = database.reference
+
+        sendButton.setOnClickListener {
+            writeNewUser(requestText, "nairobi")
+        }
+
         val toggle = object : ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close){
+                R.string.navigation_drawer_close){
             override fun onDrawerOpened(drawerView: View) {
                 super.onDrawerOpened(drawerView)
             }
@@ -81,7 +93,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         drawer.setOnClickListener {
             val actionbar = object : ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close){
+                    R.string.navigation_drawer_close){
                 override fun onDrawerOpened(drawerView: View) {
                     super.onDrawerOpened(drawerView)
                 }
@@ -96,6 +108,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             println("Clicked ..")
         }
     }
+
+    private fun writeNewUser(request: EditText, location: String?) {
+        val user = Request(request.text.toString(), location)
+        databaseReference.child("Data").setValue(user)
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         enableMyLocation()
@@ -114,27 +132,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun setMapLongClick(map: GoogleMap) {
         map.setOnMapLongClickListener { latLng ->
             map.addMarker(
-                MarkerOptions()
-                    .position(latLng)
+                    MarkerOptions()
+                            .position(latLng)
             )
         }
     }
 
     private fun isPermissionGranted() : Boolean {
         return ContextCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun enableMyLocation() {
         if (isPermissionGranted()) {
             if (ActivityCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+                            this,
+                            android.Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            this,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
             ) {
                 return
             }
@@ -142,17 +160,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         else {
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf<String>(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION_PERMISSION
+                    this,
+                    arrayOf<String>(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                    REQUEST_LOCATION_PERMISSION
             )
         }
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray) {
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray) {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
