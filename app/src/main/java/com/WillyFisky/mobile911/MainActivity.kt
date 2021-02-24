@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun writeNewUser(request: EditText, location: String?) {
         val user = Request(request.text.toString(), location)
         databaseReference.child("Data").setValue(user)
+        request.setText("")
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mobile 911</string>
+    <string name="app_name">Emergency response</string>
     <string name="send_your_request">Send your request</string>
     <string name="floating_button">floating button</string>
     <string name="title_activity_navigation_drawer">NavigationDrawer</string>
