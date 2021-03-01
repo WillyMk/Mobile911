@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -25,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.activity_admin.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private lateinit var sendData: MutableList<String>
+//    private lateinit var fusedLocationClient: FusedLocationProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +46,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapSpinner = findViewById<ProgressBar>(R.id.mapSpinner)
         val sendButton = findViewById<FloatingActionButton>(R.id.sendButton)
         val requestText = findViewById<EditText>(R.id.requestText)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.googleMap) as SupportMapFragment
@@ -65,19 +69,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        val toggle = object : ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close){
-            override fun onDrawerOpened(drawerView: View) {
-                super.onDrawerOpened(drawerView)
-            }
-
-            override fun onDrawerClosed(drawerView: View) {
-                super.onDrawerClosed(drawerView)
-            }
-        }
+        val toggle = ActionBarDrawerToggle(this, drawerLayout,0,0)
 
         toggle.isDrawerIndicatorEnabled = true
         drawerLayout.addDrawerListener(toggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toggle.syncState()
 
         navView.setNavigationItemSelectedListener {
@@ -100,22 +96,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         drawer.setOnClickListener {
-            val actionbar = object : ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open,
-                    R.string.navigation_drawer_close){
-                override fun onDrawerOpened(drawerView: View) {
-                    super.onDrawerOpened(drawerView)
-                }
-
-                override fun onDrawerClosed(drawerView: View) {
-                    super.onDrawerClosed(drawerView)
-                }
-            }
-            toggle.isDrawerIndicatorEnabled = true
-            drawerLayout.addDrawerListener(toggle)
-            toggle.syncState()
-            println("Clicked ..")
+            drawerLayout.openDrawer(navView)
         }
-    }
+ }
 
     private fun writeNewUser(request: EditText, location: String?) {
         val user = Request(request.text.toString(), location)
