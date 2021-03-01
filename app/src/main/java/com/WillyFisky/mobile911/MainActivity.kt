@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var sendData: MutableList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,12 +51,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapSpinner.isVisible = true
         mapSpinner.onFinishTemporaryDetach()
 
+        sendData = ArrayList()
+
         //initializing database
         database = FirebaseDatabase.getInstance()
         databaseReference = database.reference
 
         sendButton.setOnClickListener {
-            writeNewUser(requestText, "nairobi")
+            if(requestText.text.toString() != ""){
+                writeNewUser(requestText, "nairobi")
+            }else{
+                Toast.makeText(this, "Help request cannot be empty", Toast.LENGTH_SHORT).show()
+            }
         }
 
         val toggle = object : ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open,
@@ -80,6 +87,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 R.id.nav_login -> {
                     val intent = Intent(this, Login::class.java)
+                    intent.putExtra("data", "$sendData")
                     startActivity(intent)
                     finish()
                 }
@@ -112,6 +120,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun writeNewUser(request: EditText, location: String?) {
         val user = Request(request.text.toString(), location)
         databaseReference.child("Data").setValue(user)
+        sendData.add(request.text.toString())
         request.setText("")
     }
 
