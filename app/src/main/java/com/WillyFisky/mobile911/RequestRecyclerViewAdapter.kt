@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_view.view.*
 
-class RequestRecyclerViewAdapter(private  val addRequest: ArrayList<Request>): RecyclerView.Adapter<RequestRecyclerViewAdapter.RecyclerViewHolder>() {
+class RequestRecyclerViewAdapter(private  val addRequest: MutableList<Request>): RecyclerView.Adapter<RequestRecyclerViewAdapter.RecyclerViewHolder>() {
     inner class RecyclerViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerViewHolder {
@@ -30,5 +30,6 @@ class RequestRecyclerViewAdapter(private  val addRequest: ArrayList<Request>): R
     fun addRequestFunction(request: Request){
         addRequest.add(request)
         notifyItemInserted(addRequest.size - 1)
+        notifyDataSetChanged()
     }
 }

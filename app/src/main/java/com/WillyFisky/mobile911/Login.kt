@@ -13,6 +13,13 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        //check bundle
+        val bundle: Bundle? = intent.extras
+
+        if (bundle != null){
+            println("Bundle: ${bundle.getStringArray("data")}")
+        }
+
         //Take inputs
         val email = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)

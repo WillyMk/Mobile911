@@ -10,7 +10,7 @@ import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_admin.*
 
 class AdminActivity : AppCompatActivity() {
-    private lateinit var RequestRecyclerViewAdapter: RequestRecyclerViewAdapter
+    private lateinit var requestRecyclerViewAdapter: RequestRecyclerViewAdapter
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseRef: DatabaseReference
     private lateinit var request: Request
@@ -24,7 +24,29 @@ class AdminActivity : AppCompatActivity() {
         database = FirebaseDatabase.getInstance()
         databaseRef = database.reference
 
-        readData(databaseRef)
+
+        //Handling recyclerview
+        requestRecyclerViewAdapter = RequestRecyclerViewAdapter(mutableListOf())
+        rcView.layoutManager = LinearLayoutManager(this@AdminActivity)
+        rcView.adapter = requestRecyclerViewAdapter
+        //readData(databaseRef)
+
+        databaseRef.child("Data").addValueEventListener(
+                object : ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val value = snapshot.getValue(Request::class.java)!!
+                        request = Request(value.request.toString(), value.location.toString())
+                        requestRecyclerViewAdapter.addRequestFunction(request)
+                        println(value.toString())
+                        println(value.request)
+                        println(value.location)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        //Toast.makeText(this@AdminActivity, "Failed to load data from database", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        )
 
     }
 
@@ -33,11 +55,8 @@ class AdminActivity : AppCompatActivity() {
             object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val value = snapshot.getValue(Request::class.java)!!
-                    request = Request(value?.request.toString(), value?.location.toString())
-                    RequestRecyclerViewAdapter = RequestRecyclerViewAdapter(ArrayList<Request>())
-                    RequestRecyclerViewAdapter.addRequestFunction(request)
-                    rcView.adapter = RequestRecyclerViewAdapter
-                    rcView.layoutManager = LinearLayoutManager(this@AdminActivity)
+                    request = Request(value.request.toString(), value.location.toString())
+                    requestRecyclerViewAdapter.addRequestFunction(request)
                     println(value.toString())
                     println(value.request)
                     println(value.location)
